@@ -23,8 +23,10 @@ export default function Section({ id, name, exercises, updateExercises, onDelete
     updateExercises([...exercises, newExercise])
   }
 
-  const updateExercise = (updatedExercise: Exercise) => {
-    updateExercises(exercises.map(ex => ex.id === updatedExercise.id ? updatedExercise : ex))
+  const updateExercise = (updatedExercise: Omit<Exercise, "id">) => {
+    updateExercises(
+      exercises.map(ex => ex.id === editingId ? { ...updatedExercise, id: ex.id } : ex)
+    )
     setEditingId(null)
   }
 
@@ -44,11 +46,11 @@ export default function Section({ id, name, exercises, updateExercises, onDelete
         {exercises.map(exercise => (
           <li key={exercise.id} className="flex items-center justify-between">
             {editingId === exercise.id ? (
-              <ExerciseForm
-                initialValues={exercise}
-                onSubmit={updateExercise}
-                onCancel={() => setEditingId(null)}
-              />
+             <ExerciseForm
+             initialValues={{ name: exercise.name, weight: exercise.weight }}
+             onSubmit={updateExercise}
+             onCancel={() => setEditingId(null)}
+           />
             ) : (
               <>
                 <span>{exercise.name} - {exercise.weight} Kgs</span>
